@@ -95,7 +95,7 @@ Create and join a meeting at [meet.new](https://meet.new/). Paste its URL into t
 
 ### 7. Try the agent
 
-Try these phrases in order. Each tool call posts its result in meeting chat.
+Try these phrases. Each tool call also posts an acknowledgement message in the chat.
 
 | Try saying |
 | --- |
@@ -112,7 +112,7 @@ Try these phrases in order. Each tool call posts its result in meeting chat.
 
 After the bot leaves, stop both terminal processes with Ctrl+C.
 
-The avatar's default session limit is 10 minutes; launch another bot to repeat the demo. Restart the worker after changing code or voice settings; restart both processes after changing shared connection settings.
+The avatar's default session limit is 10 minutes; launch another bot to repeat the demo.
 
 ## Code map
 
