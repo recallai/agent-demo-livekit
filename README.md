@@ -135,15 +135,7 @@ Muting disables future speech synthesis and drops avatar audio already in flight
 
 ## Boundaries and troubleshooting
 
-- The agent cannot see meeting video or read, click, scroll, sign in to, or summarize shared webpages. Sharing displays a public HTTPS page; it does not give the agent browser control.
-- Showing a page does not automatically post its link. The last accepted URL remains available after sharing stops or a later share fails.
-- An accepted request does not prove the page visibly loaded. Some websites block automated browsers. Check the meeting before retrying an uncertain action.
-- Meeting chat messages are limited to 500 characters.
-- There is no database, search feature, transcript storage, webhook receiver, or cloud deployment requirement.
-- The launcher has no application authentication; keep it bound to localhost.
-
-If the bot stays silent, check the name prefix, listening state, and mute state first, then inspect the worker terminal. Connection failures usually mean mismatched regional Recall settings, LiveKit credentials or dispatch names, or unavailable inference/avatar access. Fill any missing `.env` setting named by an error and restart the affected process.
-
-If listening is stopped, say “Assistant, start listening” first. Ask “Assistant, leave” before stopping the worker and web server with Ctrl+C. If a provider fails, check Meet and Recall and remove any remaining demo bot.
-
-Reference: [Recall Output Media](https://docs.recall.ai/docs/stream-media).
+- Use meeting chat to see the history of commands.
+- If the bot doesn't respond, check chat to see whether it has stopped listening or is muted.
+- Chat messages are limited to 500 characters.
+- If the bot doesn't respond, make sure to clearly say “Assistant” before your command.
