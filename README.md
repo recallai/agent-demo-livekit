@@ -93,79 +93,26 @@ Keep this process running alongside the worker, then open [the launcher](http://
 
 Create and join a meeting at [meet.new](https://meet.new/). Paste its URL into the launcher and select **Send agent**, then admit **livekit demo** once it enters the waiting room.
 
-### 7. Try a request and finish the demo
+### 7. Try the agent
 
-Say “Assistant, start a screen share of https://example.com.” Expect one chat confirmation that includes the loading notice. Use the manual demonstration below to try all nine tools.
+Try these phrases in order. Each tool call posts its result in meeting chat.
 
-When finished, say “Assistant, leave,” then stop both terminal processes with Ctrl+C. If the agent has stopped listening, say “Assistant, start listening” first.
+| Try saying |
+| --- |
+| “Assistant, what is two plus two?” |
+| “Assistant, share the LiveKit homepage.” |
+| “Assistant, give me the page URL.” |
+| “Assistant, mute.” |
+| “Assistant, post Hello from the demo in chat.” |
+| “Assistant, stop the screen share.” |
+| “Assistant, unmute.” |
+| “Assistant, stop listening.” |
+| “Assistant, start listening.” |
+| “Assistant, leave the meeting.” |
+
+After the bot leaves, stop both terminal processes with Ctrl+C.
 
 The avatar's default session limit is 10 minutes; launch another bot to repeat the demo. Restart the worker after changing code or voice settings; restart both processes after changing shared connection settings.
-
-## Manual demonstration
-
-Start with a fresh bot: it should join silently and post one introduction. Follow these steps in order, saying each quoted command separately.
-
-1. **Check conversation.**
-
-   **Say:** “Assistant, what is two plus two?”
-
-   **Expect:** One short spoken answer.
-
-2. **Start a screen share and get its link.**
-
-   **Say:** “Assistant, start a screen share of https://example.com.” After the page appears, say “Assistant, send that link in chat.”
-
-   **Expect:** A loading notice in chat, the shared page, then its exact URL in chat.
-
-3. **Post a message and stop sharing.**
-
-   **Say:** “Assistant, post Hello from the demo in chat.” Then: “Assistant, stop the screen share.”
-
-   **Expect:** The requested text, then a stop confirmation in chat. The screen share ends.
-
-4. **Mute speech while keeping tools available.**
-
-   **Say:** “Assistant, mute.” Then: “Assistant, post Muted test in chat.”
-
-   **Expect:** A mute confirmation and the requested text in chat, with no speech.
-
-5. **Restore speech.**
-
-   **Say:** “Assistant, unmute.” Then: “Assistant, what is two plus two?”
-
-   **Expect:** An unmute confirmation in chat and a short spoken answer. No muted answers or actions replay.
-
-6. **Stop listening for requests.**
-
-   **Say:** “Assistant, stop listening.” Then: “Assistant, post Paused test in chat.”
-
-   **Expect:** “Stopped listening” in chat, followed by no message or action. Requests to unmute or leave should also be discarded.
-
-7. **Start listening again.**
-
-   **Say:** “Assistant, start listening” as a standalone command. Then: “Assistant, post Listening test in chat.”
-
-   **Expect:** “Started listening” and the new message in chat. Skipped requests do not replay.
-
-8. **Check that listening does not unmute speech.**
-
-   **Say:** “Assistant, mute,” then “Assistant, stop listening,” then “Assistant, start listening.” Request another screen share, its link, and then stop sharing.
-
-   **Expect:** A chat confirmation after each tool, with speech still muted throughout.
-
-9. **Leave the meeting.**
-
-   **Say:** “Assistant, leave” while still muted.
-
-   **Expect:** “Leaving the call.” in chat, followed by the bot leaving. Your meeting stays open.
-
-Additional checks:
-
-- Repeat mute, unmute, or start listening: the requested state should stay the same and each accepted command should confirm in chat.
-- Discuss or quote commands without directing them at the avatar: its state should not change. After stopping listening, only a standalone addressed “start listening” request should resume it.
-- During a longer answer, ordinary conversation should not interrupt it. A request addressed to “Assistant” can interrupt once its transcript is complete.
-
-Perform the demonstration manually and record results outside the repository. The sample contains no evaluator or test harness.
 
 ## Code map
 
