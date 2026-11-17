@@ -112,7 +112,7 @@ Try these phrases. Each tool call also posts an acknowledgement message in the c
 
 After the bot leaves, stop both terminal processes with Ctrl+C.
 
-The avatar's default session limit is 10 minutes; launch another bot to repeat the demo.
+The avatar has a default session limit; launch another bot to repeat the demo.
 
 ## Code map
 
