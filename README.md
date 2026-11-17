@@ -1,8 +1,8 @@
 # agent-demo-livekit
 
-A small Google Meet voice-agent demo with a speaking Runway avatar and nine meeting tools. The launcher has one meeting-URL input and a submit button.
+A live interactive meeting agent built with [Recall's Output Media API](https://docs.recall.ai/docs/stream-media) and LiveKit. It uses Recall bots to join meetings, answer spoken questions through an animated avatar, share webpages, and post messages and links in meeting chat.
 
-The bot is named **livekit demo** and uses Recall's `web_4_core` Google Meet variant. Its voice is Astra, an upbeat female voice from [Rime](https://docs.livekit.io/agents/models/tts/rime/#voices).
+The launcher has one meeting-URL input and a submit button. The bot is named **livekit demo**, with a Runway avatar and Astra, an upbeat female voice from [Rime](https://docs.livekit.io/agents/models/tts/rime/#voices).
 
 ## Behavior
 
@@ -65,6 +65,8 @@ In the **same Recall workspace**, open **Agents → LiveKit** and configure the 
 For Runway setup, see [LiveKit's Runway guide](https://docs.livekit.io/agents/models/avatar/plugins/runway/). The app passes the preset ID to Runway while LiveKit supplies the agent's voice and instructions.
 
 ## Run
+
+This sample's launcher currently accepts Google Meet URLs and creates `web_4_core` Google Meet bots. The agent demonstrates the Recall Output Media and LiveKit integration; the launcher validation and bot configuration would need updating to use another meeting platform.
 
 Start the worker:
 
