@@ -45,14 +45,9 @@ Never replay unheard answers or ignored requests, or repeat actions.
 """
 
 INTRO_CHAT_MESSAGE = (
-    "Say 'Assistant', then a request:\n\n"
-    "• Ask a question\n"
-    "• Share a webpage or send its URL\n"
-    "• Post a chat message\n"
-    "• Stop sharing or leave\n\n"
-    "Voice: mute / unmute (tools still work)\n"
-    "Requests: stop listening / start listening (keeps mute setting)\n\n"
-    "Check chat for action confirmations."
+    "Start requests with 'Assistant, [command]'.\n\n"
+    "See the full list of commands here:\n"
+    "https://github.com/recallai/agent-demo-livekit#7-try-the-agent"
 )
 
 
