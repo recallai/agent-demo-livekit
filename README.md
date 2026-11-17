@@ -13,10 +13,10 @@ Start every request with **“Assistant”** or **“livekit demo”**.
 | Post the most recently shared page's exact link | `send_current_page_link()` |
 | Stop sharing | `stop_sharing()` |
 | Leave the meeting | `leave_call()` |
-| Silence speech; keep tools available | `mute_agent()` |
-| Enable speech | `unmute_agent()` |
-| Stop answering and acting | `ignore_agent()` |
-| Resume requests; preserve the mute setting | `listen_agent()` |
+| Silence speech; confirm in chat; keep tools available | `mute_agent()` |
+| Enable speech; confirm in chat | `unmute_agent()` |
+| Stop answering and acting; confirm in chat | `ignore_agent()` |
+| Resume requests; confirm in chat; preserve the mute setting | `listen_agent()` |
 
 | Request mode | Speech setting | Speaks when asked | Executes requests |
 | --- | --- | --- | --- |
@@ -88,11 +88,11 @@ An intro-chat failure does not end the session or trigger a retry. The avatar's 
 1. Confirm silent joining and one chat introduction. Speak normally without either name; expect no response or action. Ask for a longer answer, then speak without either name; the answer should continue. An addressed request can interrupt once its transcript is complete.
 2. Ask “Assistant, what is two plus two?” Expect a short answer without follow-up offers.
 3. Say “Assistant, show https://example.com.” Check the brief delay announcement and visible screen share. Say “Assistant, send that link in chat” and check the exact URL.
-4. Say “Assistant, mute and post 'Hello from the demo' in chat.” Expect the message and no speech. Repeat the mute command; it should stay muted.
+4. Say “Assistant, mute and post 'Hello from the demo' in chat.” Expect both “Muted. Tools still work.” and the requested message in chat, with no speech. Repeat the mute command; it should stay muted.
 5. While muted, request another webpage, its link, and then stop sharing. Prefix each request with “Assistant.” Confirm the actions work silently. Ask a question and confirm no spoken answer.
-6. Say “Assistant, unmute,” then ask a fresh question. Expect a short answer and no replay of muted answers or actions. Repeat unmute; it should stay available.
-7. Say “Assistant, ignore.” Ask an addressed question, request a chat message, and ask it to unmute or leave. Expect no response or action. Discuss or quote “listen”; it should stay ignoring.
-8. Say “Assistant, listen” as a separate request. Ask a fresh question and confirm a short response with no replay of ignored requests.
+6. Say “Assistant, unmute,” check for “Unmuted.” in chat, then ask a fresh question. Expect a short answer and no replay of muted answers or actions. Repeat unmute; it should stay available.
+7. Say “Assistant, ignore” and check its chat confirmation. Ask an addressed question, request a chat message, and ask it to unmute or leave. Expect no response or action. Discuss or quote “listen”; it should stay ignoring.
+8. Say “Assistant, listen” as a separate request and check its chat confirmation and speech setting. Ask a fresh question and confirm a short response with no replay of ignored requests.
 9. Say “Assistant, mute,” then “Assistant, ignore,” then “Assistant, listen.” It should remain silent but carry out an addressed chat request. Say “Assistant, unmute” and confirm speech returns. Repeat listen and unmute to check they preserve the state.
 10. Say “Assistant, mute,” then “Assistant, leave.” Confirm that it leaves silently while your meeting stays open.
 

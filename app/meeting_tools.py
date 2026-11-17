@@ -1,6 +1,7 @@
 """The nine meeting tools and their per-meeting state."""
 
 import asyncio
+import logging
 import time
 from collections.abc import Awaitable
 from ipaddress import ip_address
@@ -9,6 +10,8 @@ from urllib.parse import urlsplit
 from livekit.agents import AgentSession, RunContext, StopResponse, ToolError, function_tool
 
 from app.recall_client import RecallClient, RecallError
+
+logger = logging.getLogger("meeting-demo")
 
 
 def public_webpage_url(value: str) -> str:
@@ -63,6 +66,13 @@ class MeetingTools:
             await request
         except RecallError as error:
             raise ToolError(str(error)) from error
+
+    async def _confirm_control(self, message: str) -> None:
+        try:
+            await self.client.send_chat_message(self.bot_id, message)
+        except RecallError:
+            # The control is already applied; do not undo it or retry the message.
+            logger.warning("Could not confirm the agent control in chat; not retrying")
 
     @function_tool()
     async def show_webpage(self, url: str, context: RunContext) -> str:
@@ -137,6 +147,7 @@ class MeetingTools:
         self._require_active_request(context)
         self.session.output.set_audio_enabled(False)
         self.session.output.set_transcription_enabled(False)
+        await self._confirm_control("Muted. Tools still work.")
         return "Speech muted."
 
     @function_tool()
@@ -145,6 +156,7 @@ class MeetingTools:
         self._require_active_request(context)
         self.session.output.set_audio_enabled(True)
         self.session.output.set_transcription_enabled(True)
+        await self._confirm_control("Unmuted.")
         return "Speech enabled."
 
     @function_tool()
@@ -154,6 +166,8 @@ class MeetingTools:
         self.is_ignoring = True
         # Awaiting here would wait for this tool's own speech handle to finish.
         self._ignore_interruption = self.session.interrupt(force=True)
+        speech = "muted" if self.is_muted else "enabled"
+        await self._confirm_control(f"Ignoring requests. Speech remains {speech}.")
         raise StopResponse()
 
     @function_tool()
@@ -169,6 +183,8 @@ class MeetingTools:
             self.session.clear_user_turn()
             self.listening_since = time.time()
             self.is_ignoring = False
+        speech = "muted" if self.is_muted else "enabled"
+        await self._confirm_control(f"Listening. Speech is {speech}.")
         return "Listening. Speech mute setting unchanged."
 
     def tools(self) -> list:
