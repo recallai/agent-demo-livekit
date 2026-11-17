@@ -4,19 +4,19 @@ A small agent demo featuring [Recall.ai's Output Media API](https://docs.recall.
 
 ## Behavior
 
-Start every request with **“Assistant”** or **“livekit demo”**.
+Start every request with **“Assistant”** or **“livekit demo”**; each tool call posts feedback in meeting chat.
 
 | Action | Tool |
 | --- | --- |
-| Show or replace a public webpage | `show_webpage(url)` |
+| Show or replace a public webpage; post a loading notice | `show_webpage(url)` |
 | Post text in meeting chat | `send_chat_message(message)` |
 | Post the most recently shared page's exact link | `send_current_page_link()` |
 | Stop sharing | `stop_sharing()` |
-| Leave the meeting | `leave_call()` |
-| Silence speech; confirm in chat; keep tools available | `mute_agent()` |
-| Enable speech; confirm in chat | `unmute_agent()` |
-| Stop answering and acting; confirm in chat | `ignore_agent()` |
-| Resume requests; confirm in chat; preserve the mute setting | `listen_agent()` |
+| Post a departure message and leave the meeting | `leave_call()` |
+| Silence speech; keep tools available | `mute_agent()` |
+| Enable speech | `unmute_agent()` |
+| Stop answering and acting | `ignore_agent()` |
+| Resume requests; preserve the mute setting | `listen_agent()` |
 
 | Request mode | Speech setting | Speaks when asked | Executes requests |
 | --- | --- | --- | --- |

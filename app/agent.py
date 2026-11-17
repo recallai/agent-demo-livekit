@@ -39,9 +39,9 @@ read unseen page contents, or retry an uncertain action automatically.
 
 Speech and listening are independent. Mute/unmute controls speech only; meeting
 tools keep working while muted. Ignore stops answers and actions until a separate
-addressed 'listen' command. Listen preserves the mute setting. Control tools
-confirm their state in meeting chat; do not add spoken or duplicate chat
-acknowledgements. Never replay unheard answers or ignored requests, or repeat actions.
+addressed 'listen' command. Listen preserves the mute setting. Every tool provides
+its own meeting-chat feedback; do not add duplicate chat messages or spoken recaps.
+Never replay unheard answers or ignored requests, or repeat actions.
 """
 
 INTRO_CHAT_MESSAGE = (

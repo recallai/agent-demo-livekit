@@ -65,24 +65,29 @@ class MeetingTools:
         try:
             await request
         except RecallError as error:
+            await self._post_status(str(error))
             raise ToolError(str(error)) from error
 
-    async def _confirm_control(self, message: str) -> None:
+    async def _post_status(self, message: str) -> None:
         try:
             await self.client.send_chat_message(self.bot_id, message)
         except RecallError:
-            # The control is already applied; do not undo it or retry the message.
-            logger.warning("Could not confirm the agent control in chat; not retrying")
+            # Feedback must not undo an action or trigger an automatic retry.
+            logger.warning("Could not post tool status in chat; not retrying")
 
     @function_tool()
     async def show_webpage(self, url: str, context: RunContext) -> str:
         """Show or replace a public HTTPS page using the supplied URL.
 
         Displays the page without reading its contents, interacting, or posting
-        its link. Announces the loading delay automatically when speech is enabled.
+        its link. Posts a loading notice in chat and speaks it when speech is enabled.
         """
         self._require_active_request(context)
-        url = public_webpage_url(url)
+        try:
+            url = public_webpage_url(url)
+        except ToolError as error:
+            await self._post_status(str(error))
+            raise
         await context.wait_for_playout()
         self._require_active_request(context)
         if not self.is_muted:
@@ -94,6 +99,7 @@ class MeetingTools:
         self._require_active_request(context)
         await self._call_recall(self.client.show_webpage(self.bot_id, url))
         self.current_page_url = url
+        await self._post_status("Screen share requested. It may take a few seconds to appear.")
         return "Recall accepted the webpage share request. Page visibility is unverified."
 
     @function_tool()
@@ -104,6 +110,7 @@ class MeetingTools:
         """
         self._require_active_request(context)
         if not message.strip() or len(message) > 500:
+            await self._post_status("Message not sent: use 1 to 500 characters.")
             raise ToolError("Google Meet messages must contain 1 to 500 characters.")
         await self._call_recall(self.client.send_chat_message(self.bot_id, message))
         return "Recall accepted the chat message."
@@ -116,6 +123,7 @@ class MeetingTools:
         """
         self._require_active_request(context)
         if self.current_page_url is None:
+            await self._post_status("No webpage has been selected yet. Ask me to show one first.")
             raise ToolError("No page has been selected. Ask for a webpage URL first.")
         return await self.send_chat_message(self.current_page_url, context)
 
@@ -124,6 +132,7 @@ class MeetingTools:
         """Stop the webpage screen share while keeping the agent available."""
         self._require_active_request(context)
         await self._call_recall(self.client.stop_sharing(self.bot_id))
+        await self._post_status("Stopped sharing.")
         return "Recall accepted the request to stop sharing."
 
     @function_tool()
@@ -136,6 +145,8 @@ class MeetingTools:
         self._require_active_request(context)
         await context.wait_for_playout()
         self._require_active_request(context)
+        await self._post_status("Leaving the call.")
+        self._require_active_request(context)
         await self._call_recall(self.client.leave_call(self.bot_id))
         # Schedule shutdown instead of waiting for this tool's own session to close.
         context.session.shutdown(drain=False)
@@ -147,7 +158,7 @@ class MeetingTools:
         self._require_active_request(context)
         self.session.output.set_audio_enabled(False)
         self.session.output.set_transcription_enabled(False)
-        await self._confirm_control("Muted. Tools still work.")
+        await self._post_status("Muted. Tools still work.")
         return "Speech muted."
 
     @function_tool()
@@ -156,7 +167,7 @@ class MeetingTools:
         self._require_active_request(context)
         self.session.output.set_audio_enabled(True)
         self.session.output.set_transcription_enabled(True)
-        await self._confirm_control("Unmuted.")
+        await self._post_status("Unmuted.")
         return "Speech enabled."
 
     @function_tool()
@@ -167,7 +178,7 @@ class MeetingTools:
         # Awaiting here would wait for this tool's own speech handle to finish.
         self._ignore_interruption = self.session.interrupt(force=True)
         speech = "muted" if self.is_muted else "enabled"
-        await self._confirm_control(f"Ignoring requests. Speech remains {speech}.")
+        await self._post_status(f"Ignoring requests. Speech remains {speech}.")
         raise StopResponse()
 
     @function_tool()
@@ -184,7 +195,7 @@ class MeetingTools:
             self.listening_since = time.time()
             self.is_ignoring = False
         speech = "muted" if self.is_muted else "enabled"
-        await self._confirm_control(f"Listening. Speech is {speech}.")
+        await self._post_status(f"Listening. Speech is {speech}.")
         return "Listening. Speech mute setting unchanged."
 
     def tools(self) -> list:
