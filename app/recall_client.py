@@ -102,9 +102,9 @@ class RecallClient:
             )
         return result["id"]
 
-    async def show_webpage(self, bot_id: str, url: str) -> None:
+    async def start_screenshare(self, bot_id: str, url: str) -> None:
         await self._request(
-            "POST", self._bot_path(bot_id, "output_media"), "webpage sharing",
+            "POST", self._bot_path(bot_id, "output_media"), "starting the screen share",
             {"screenshare": {"kind": "webpage", "config": {"url": url}}},
         )
 
@@ -114,7 +114,7 @@ class RecallClient:
             {"message": message, "to": "everyone", "pin": False},
         )
 
-    async def stop_sharing(self, bot_id: str) -> None:
+    async def stop_screenshare(self, bot_id: str) -> None:
         await self._request(
             "DELETE", self._bot_path(bot_id, "output_media"), "stopping the screen share",
             {"screenshare": True},

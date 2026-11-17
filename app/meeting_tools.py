@@ -76,8 +76,8 @@ class MeetingTools:
             logger.warning("Could not post tool status in chat; not retrying")
 
     @function_tool()
-    async def show_webpage(self, url: str, context: RunContext) -> str:
-        """Show or replace a public HTTPS page using the supplied URL.
+    async def start_screenshare(self, url: str, context: RunContext) -> str:
+        """Start or replace a screen share displaying a public HTTPS webpage.
 
         Displays the page without reading its contents, interacting, or posting
         its link. Posts a loading notice in chat and speaks it when speech is enabled.
@@ -97,10 +97,10 @@ class MeetingTools:
             )
             await announcement.wait_for_playout()
         self._require_active_request(context)
-        await self._call_recall(self.client.show_webpage(self.bot_id, url))
+        await self._call_recall(self.client.start_screenshare(self.bot_id, url))
         self.current_page_url = url
         await self._post_status("Screen share requested. It may take a few seconds to appear.")
-        return "Recall accepted the webpage share request. Page visibility is unverified."
+        return "Recall accepted the screen share request. Page visibility is unverified."
 
     @function_tool()
     async def send_chat_message(self, message: str, context: RunContext) -> str:
@@ -128,10 +128,10 @@ class MeetingTools:
         return await self.send_chat_message(self.current_page_url, context)
 
     @function_tool()
-    async def stop_sharing(self, context: RunContext) -> str:
+    async def stop_screenshare(self, context: RunContext) -> str:
         """Stop the webpage screen share while keeping the agent available."""
         self._require_active_request(context)
-        await self._call_recall(self.client.stop_sharing(self.bot_id))
+        await self._call_recall(self.client.stop_screenshare(self.bot_id))
         await self._post_status("Stopped sharing.")
         return "Recall accepted the request to stop sharing."
 
@@ -139,7 +139,7 @@ class MeetingTools:
     async def leave_call(self, context: RunContext) -> str:
         """Remove only this bot from the meeting.
 
-        Say 'Goodbye' before calling when speech is enabled. Use stop_sharing to
+        Say 'Goodbye' before calling when speech is enabled. Use stop_screenshare to
         end a screen share without leaving.
         """
         self._require_active_request(context)
@@ -200,10 +200,10 @@ class MeetingTools:
 
     def tools(self) -> list:
         return [
-            self.show_webpage,
+            self.start_screenshare,
             self.send_chat_message,
             self.send_current_page_link,
-            self.stop_sharing,
+            self.stop_screenshare,
             self.leave_call,
             self.mute_agent,
             self.unmute_agent,

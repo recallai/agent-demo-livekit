@@ -8,10 +8,10 @@ Start every request with **“Assistant”** or **“livekit demo”**; each too
 
 | Action | Tool |
 | --- | --- |
-| Show or replace a public webpage; post a loading notice | `show_webpage(url)` |
+| Start or replace a screen share with a public webpage; post a loading notice | `start_screenshare(url)` |
 | Post text in meeting chat | `send_chat_message(message)` |
 | Post the most recently shared page's exact link | `send_current_page_link()` |
-| Stop sharing | `stop_sharing()` |
+| Stop the screen share | `stop_screenshare()` |
 | Post a departure message and leave the meeting | `leave_call()` |
 | Silence speech; keep tools available | `mute_agent()` |
 | Enable speech | `unmute_agent()` |
@@ -79,7 +79,7 @@ Keep both processes running. Open [the launcher](http://127.0.0.1:8000), create 
 
 After the avatar connects, the bot posts:
 
-> Start requests with 'Assistant' or 'livekit demo'. Ask questions, show a webpage, post a message/link, stop sharing, or leave. Mute/unmute controls speech; tools still work while muted. Ignore pauses all requests until 'Assistant, listen'. Listen keeps the mute setting.
+> Start requests with 'Assistant'. Ask questions, start a screen share, post a message/link, stop a screen share, or leave. Mute/unmute controls speech; tools still work while muted. Ignore pauses all requests until 'Assistant, listen'. Listen keeps the mute setting.
 
 An intro-chat failure does not end the session or trigger a retry. The avatar's default session limit is 10 minutes; launch another bot to repeat the demo. Restart the worker after changing code or voice settings; restart both processes after changing shared connection settings.
 
@@ -87,7 +87,7 @@ An intro-chat failure does not end the session or trigger a retry. The avatar's 
 
 1. Confirm silent joining and one chat introduction. Speak normally without either name; expect no response or action. Ask for a longer answer, then speak without either name; the answer should continue. An addressed request can interrupt once its transcript is complete.
 2. Ask “Assistant, what is two plus two?” Expect a short answer without follow-up offers.
-3. Say “Assistant, show https://example.com.” Check the brief delay announcement and visible screen share. Say “Assistant, send that link in chat” and check the exact URL.
+3. Say “Assistant, start a screen share of https://example.com.” Check the brief delay announcement and visible screen share. Say “Assistant, send that link in chat” and check the exact URL.
 4. Say “Assistant, mute and post 'Hello from the demo' in chat.” Expect both “Muted. Tools still work.” and the requested message in chat, with no speech. Repeat the mute command; it should stay muted.
 5. While muted, request another webpage, its link, and then stop sharing. Prefix each request with “Assistant.” Confirm the actions work silently. Ask a question and confirm no spoken answer.
 6. Say “Assistant, unmute,” check for “Unmuted.” in chat, then ask a fresh question. Expect a short answer and no replay of muted answers or actions. Repeat unmute; it should stay available.

@@ -2,7 +2,7 @@
 
 Keep this a small, runnable Google Meet demo. The page has one meeting-URL input and a submit button.
 
-- The nine conversational tools are `show_webpage`, `send_chat_message`, `send_current_page_link`, `stop_sharing`, `leave_call`, `mute_agent`, `unmute_agent`, `ignore_agent`, and `listen_agent`.
+- The nine conversational tools are `start_screenshare`, `send_chat_message`, `send_current_page_link`, `stop_screenshare`, `leave_call`, `mute_agent`, `unmute_agent`, `ignore_agent`, and `listen_agent`.
 - Require each request to start with `Assistant` or `livekit demo`. Filter other meeting conversation in the public STT node before it can interrupt or enter the agent's context. Keep `vad=None` and STT turn detection paired with this filter. Answer in one short sentence unless asked for detail; avoid unsolicited advice, follow-up questions, and spoken tool recaps.
 - Start with speech enabled. `mute` silences speech only; `unmute` restores it. All requested tools remain available while muted and listening, including leaving. Never replay unheard speech or repeat actions on unmute. Repeated commands are idempotent. Gate audio in code without cancelling tool execution.
 - Start listening. `ignore` stops answers and actions until a standalone addressed `listen` command. Listen/ignore preserve the mute setting. Discard ignored turns before history; never queue or replay them. Use a small exact-command check while ignoring, not a separate model classifier.
