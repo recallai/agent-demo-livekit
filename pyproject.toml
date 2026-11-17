@@ -1,0 +1,21 @@
+[project]
+name = "livekit-meeting-agent"
+version = "0.1.0"
+description = "A small LiveKit voice agent with Recall meeting tools."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "aiohttp>=3.12,<4",
+    "fastapi>=0.115,<1",
+    "livekit-agents[runway]>=1.8.12,<2",
+    "python-dotenv>=1.0,<2",
+    "uvicorn>=0.34,<1",
+]
+
+[tool.uv]
+package = false
+
+# Match the lockfile even when uv has a different user-level default index.
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true
