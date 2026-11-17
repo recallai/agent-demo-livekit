@@ -4,7 +4,7 @@ A small agent demo featuring [Recall.ai's Output Media API](https://docs.recall.
 
 ## Behavior
 
-Start every request with **“Assistant”** or **“livekit demo”**; each tool call posts feedback in meeting chat.
+Address the avatar as **“Assistant”**, followed by a command such as “start a screen share of https://example.com.” Each tool call posts its result in meeting chat; requested messages and links are their own confirmation.
 
 | Action | Tool |
 | --- | --- |
@@ -20,13 +20,15 @@ Start every request with **“Assistant”** or **“livekit demo”**; each too
 
 ## Requirements
 
+> **[Talk to us](https://recall.ai/book-agent-demo) before you start.** This demo requires us to enable feature flags on your Recall workspace.
+
 - Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/).
 - A Recall workspace with the LiveKit integration enabled and a REST API key.
 - A LiveKit Cloud project with credentials and access to Inference for STT, LLM, and TTS.
 - A Runway API key with Characters access and a character preset.
 - A Google account to host the meeting.
 
-## Implementation
+## Quickstart
 
 Set up and run the sample locally.
 
@@ -65,7 +67,7 @@ For Runway setup, see [LiveKit's Runway guide](https://docs.livekit.io/agents/mo
 
 ### 3. Connect Recall to LiveKit
 
-In the **same Recall workspace** as `RECALL_API_KEY`, open **Agents → LiveKit**. Enter the `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` values from `.env`. An introduction-only Agents page means the workspace still needs access to the integration.
+Open [Agents → LiveKit in the Recall dashboard](https://us-west-2.recall.ai/dashboard/agents/livekit). Select the region and workspace matching `RECALL_API_KEY`, then enter the `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` values from `.env`.
 
 ### 4. Start the agent worker
 
@@ -95,7 +97,7 @@ This launcher currently accepts Google Meet URLs and creates `web_4_core` Google
 
 ### 7. Try a request and finish the demo
 
-Say “Assistant, what is two plus two?” Then try “Assistant, start a screen share of https://example.com.” Use the manual demonstration below to check all nine tools.
+Say “Assistant, start a screen share of https://example.com.” Expect one chat confirmation that includes the loading notice. Use the manual demonstration below to try all nine tools.
 
 When finished, say “Assistant, leave,” then stop both terminal processes with Ctrl+C. If the agent is ignoring requests, say “Assistant, listen” first.
 
@@ -103,16 +105,67 @@ The avatar's default session limit is 10 minutes; launch another bot to repeat t
 
 ## Manual demonstration
 
-1. Confirm silent joining and one chat introduction. Speak normally without either name; expect no response or action. Ask for a longer answer, then speak without either name; the answer should continue. An addressed request can interrupt once its transcript is complete.
-2. Ask “Assistant, what is two plus two?” Expect a short answer without follow-up offers.
-3. Say “Assistant, start a screen share of https://example.com.” Check the brief delay announcement and visible screen share. Say “Assistant, send that link in chat” and check the exact URL.
-4. Say “Assistant, mute and post 'Hello from the demo' in chat.” Expect both “Muted. Tools still work.” and the requested message in chat, with no speech. Repeat the mute command; it should stay muted.
-5. While muted, request another webpage, its link, and then stop sharing. Prefix each request with “Assistant.” Confirm the actions work silently. Ask a question and confirm no spoken answer.
-6. Say “Assistant, unmute,” check for “Unmuted.” in chat, then ask a fresh question. Expect a short answer and no replay of muted answers or actions. Repeat unmute; it should stay available.
-7. Say “Assistant, ignore” and check its chat confirmation. Ask an addressed question, request a chat message, and ask it to unmute or leave. Expect no response or action. Discuss or quote “listen”; it should stay ignoring.
-8. Say “Assistant, listen” as a separate request and check its chat confirmation and speech setting. Ask a fresh question and confirm a short response with no replay of ignored requests.
-9. Say “Assistant, mute,” then “Assistant, ignore,” then “Assistant, listen.” It should remain silent but carry out an addressed chat request. Say “Assistant, unmute” and confirm speech returns. Repeat listen and unmute to check they preserve the state.
-10. Say “Assistant, mute,” then “Assistant, leave.” Confirm that it leaves silently while your meeting stays open.
+Start with a fresh bot: it should join silently and post one introduction. Follow these steps in order, saying each quoted command separately.
+
+1. **Check conversation.**
+
+   **Say:** “Assistant, what is two plus two?”
+
+   **Expect:** One short spoken answer.
+
+2. **Start a screen share and get its link.**
+
+   **Say:** “Assistant, start a screen share of https://example.com.” After the page appears, say “Assistant, send that link in chat.”
+
+   **Expect:** A loading notice in chat, the shared page, then its exact URL in chat.
+
+3. **Post a message and stop sharing.**
+
+   **Say:** “Assistant, post Hello from the demo in chat.” Then: “Assistant, stop the screen share.”
+
+   **Expect:** The requested text, then a stop confirmation in chat. The screen share ends.
+
+4. **Mute speech while keeping tools available.**
+
+   **Say:** “Assistant, mute.” Then: “Assistant, post Muted test in chat.”
+
+   **Expect:** A mute confirmation and the requested text in chat, with no speech.
+
+5. **Restore speech.**
+
+   **Say:** “Assistant, unmute.” Then: “Assistant, what is two plus two?”
+
+   **Expect:** An unmute confirmation in chat and a short spoken answer. No muted answers or actions replay.
+
+6. **Ignore requests.**
+
+   **Say:** “Assistant, ignore.” Then: “Assistant, post Ignore test in chat.”
+
+   **Expect:** An ignore confirmation, followed by no message or action. Requests to unmute or leave should also be ignored.
+
+7. **Resume listening.**
+
+   **Say:** “Assistant, listen” as a standalone command. Then: “Assistant, post Listening test in chat.”
+
+   **Expect:** A listen confirmation and the new message in chat. Ignored requests do not replay.
+
+8. **Check that listening does not unmute speech.**
+
+   **Say:** “Assistant, mute,” then “Assistant, ignore,” then “Assistant, listen.” Request another screen share, its link, and then stop sharing.
+
+   **Expect:** A chat confirmation after each tool, with speech still muted throughout.
+
+9. **Leave the meeting.**
+
+   **Say:** “Assistant, leave” while still muted.
+
+   **Expect:** “Leaving the call.” in chat, followed by the bot leaving. Your meeting stays open.
+
+Additional checks:
+
+- Repeat mute, unmute, or listen: the requested state should stay the same and each accepted command should confirm in chat.
+- Discuss or quote commands without directing them at the avatar: its state should not change. While ignoring, only a standalone addressed “listen” request should resume it.
+- During a longer answer, ordinary conversation should not interrupt it. A request addressed to “Assistant” can interrupt once its transcript is complete.
 
 Perform the demonstration manually and record results outside the repository. The sample contains no evaluator or test harness.
 
