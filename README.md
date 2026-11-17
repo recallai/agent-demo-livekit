@@ -1,34 +1,29 @@
 # agent-demo-livekit
 
-A live interactive meeting agent built with [Recall's Output Media API](https://docs.recall.ai/docs/stream-media) and LiveKit. It uses Recall bots to join meetings, answer spoken questions through an animated avatar, share webpages, and post messages and links in meeting chat.
-
-The launcher has one meeting-URL input and a submit button. The bot is named **livekit demo**, with a Runway avatar and Astra, an upbeat female voice from [Rime](https://docs.livekit.io/agents/models/tts/rime/#voices).
+A small agent demo featuring [Recall.ai's Output Media API](https://docs.recall.ai/docs/stream-media) and [LiveKit](https://livekit.io/). It includes an interactive avatar you can command through nine tool calls.
 
 ## Behavior
 
-Start **every request** with **Assistant** or **livekit demo**, including follow-ups and mute commands. Other conversation is discarded before it enters the agent's context. Optional greetings such as “Hey, Assistant” work too. Requests are accepted after their complete transcript is available, so unrelated speech does not cut off an active answer.
+Start every request with **“Assistant”** or **“livekit demo”**.
 
-The agent joins silently and posts one concise chat introduction. It answers direct questions in one short sentence unless you ask for detail. It does not offer unsolicited help, suggest next steps, or read a feature list aloud.
-
-| Request, prefixed with “Assistant, …” | Tool |
+| Action | Tool |
 | --- | --- |
-| Show a public webpage or replace the current page | `show_webpage(url)` |
+| Show or replace a public webpage | `show_webpage(url)` |
 | Post text in meeting chat | `send_chat_message(message)` |
-| Send the exact link to the most recently shared page | `send_current_page_link()` |
+| Post the most recently shared page's exact link | `send_current_page_link()` |
 | Stop sharing | `stop_sharing()` |
 | Leave the meeting | `leave_call()` |
-| Mute | `mute_agent()` |
-| Unmute | `unmute_agent()` |
-| Ignore requests | `ignore_agent()` |
-| Listen for requests again | `listen_agent()` |
+| Silence speech; keep tools available | `mute_agent()` |
+| Enable speech | `unmute_agent()` |
+| Stop answering and acting | `ignore_agent()` |
+| Resume requests; preserve the mute setting | `listen_agent()` |
 
-**Mute controls speech only.** While listening, all directly requested tools still work while muted, including chat, screen sharing, and leaving. It keeps hearing addressed requests. Muted answers are not spoken or queued for later playback. Unmuting does not recap those answers or repeat completed actions. Repeated commands leave speech in the requested state.
-
-**Ignore controls request processing.** Say “Assistant, ignore” to stop both answers and meeting actions. Only a standalone “Assistant, listen” or “livekit demo, listen” resumes processing; optional “please” is accepted. Say the next request separately. Ignored requests, including unmute, are discarded before conversation history and never replayed.
-
-These settings are independent: **mute → ignore → listen** leaves the agent listening but still muted. Say “Assistant, unmute” to restore speech. It starts listening with speech enabled, while still joining silently.
-
-Sharing a page normally announces “The screen share may take a couple of seconds to appear.” While muted, the same action runs silently. Muting does not hide the avatar or stop an existing share.
+| Request mode | Speech setting | Speaks when asked | Executes requests |
+| --- | --- | --- | --- |
+| Listening | Unmuted | Yes | Yes |
+| Listening | Muted | No | Yes |
+| Ignoring | Unmuted | No | Only standalone `listen`; others discarded |
+| Ignoring | Muted | No | Only standalone `listen`; others discarded |
 
 ## Requirements and configuration
 
