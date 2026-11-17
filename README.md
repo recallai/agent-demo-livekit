@@ -18,14 +18,7 @@ Start every request with **“Assistant”** or **“livekit demo”**; each too
 | Stop answering and acting | `ignore_agent()` |
 | Resume requests; preserve the mute setting | `listen_agent()` |
 
-| Request mode | Speech setting | Speaks when asked | Executes requests |
-| --- | --- | --- | --- |
-| Listening | Unmuted | Yes | Yes |
-| Listening | Muted | No | Yes |
-| Ignoring | Unmuted | No | Only standalone `listen`; others discarded |
-| Ignoring | Muted | No | Only standalone `listen`; others discarded |
-
-## Requirements and configuration
+## Requirements
 
 - Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/).
 - A Recall workspace with the LiveKit integration enabled and a REST API key.
@@ -33,10 +26,23 @@ Start every request with **“Assistant”** or **“livekit demo”**; each too
 - A Runway API key with Characters access and a character preset.
 - A Google account to host the meeting.
 
-From the repository root:
+## Implementation
+
+Set up and run the sample locally.
+
+### 1. Clone the repository and install dependencies
 
 ```sh
+git clone https://github.com/recallai/agent-demo-livekit.git
+cd agent-demo-livekit
 uv sync --locked
+```
+
+### 2. Configure the environment
+
+Create the local configuration file:
+
+```sh
 cp .env.example .env
 ```
 
@@ -55,33 +61,45 @@ Fill in the root `.env`. It is ignored by Git and never sent to the browser. Bot
 | `STT_MODEL`, `LLM_MODEL` | LiveKit Inference model IDs from the example. |
 | `TTS_MODEL`, `TTS_VOICE` | The example uses `rime/coda` and `astra`. |
 
-In the **same Recall workspace**, open **Agents → LiveKit** and configure the URL, key, and secret from the same LiveKit project. An introduction-only Agents page means the workspace still needs access to the integration.
-
 For Runway setup, see [LiveKit's Runway guide](https://docs.livekit.io/agents/models/avatar/plugins/runway/). The app passes the preset ID to Runway while LiveKit supplies the agent's voice and instructions.
 
-## Run
+### 3. Connect Recall to LiveKit
 
-This sample's launcher currently accepts Google Meet URLs and creates `web_4_core` Google Meet bots. The agent demonstrates the Recall Output Media and LiveKit integration; the launcher validation and bot configuration would need updating to use another meeting platform.
+In the **same Recall workspace** as `RECALL_API_KEY`, open **Agents → LiveKit**. Enter the `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` values from `.env`. An introduction-only Agents page means the workspace still needs access to the integration.
 
-Start the worker:
+### 4. Start the agent worker
+
+From the repository root:
 
 ```sh
 uv run --locked python -m app.agent dev
 ```
 
-Wait for it to register, then start the launcher in another terminal:
+Wait for the terminal to report that the worker has registered. Keep this process running.
+
+### 5. Start the launcher
+
+Open another terminal in the repository root:
 
 ```sh
 uv run --locked uvicorn app.web:app --host 127.0.0.1 --port 8000
 ```
 
-Keep both processes running. Open [the launcher](http://127.0.0.1:8000), create a meeting at [meet.new](https://meet.new), paste its URL, and select **Send agent**. Admit the bot if prompted. The form confirms the request was accepted; joining and avatar startup take additional time.
+Keep this process running alongside the worker, then open [the launcher](http://127.0.0.1:8000).
 
-After the avatar connects, the bot posts:
+### 6. Send the agent to a meeting
 
-> Start requests with 'Assistant'. Ask questions, start a screen share, post a message/link, stop a screen share, or leave. Mute/unmute controls speech; tools still work while muted. Ignore pauses all requests until 'Assistant, listen'. Listen keeps the mute setting.
+Create and join a meeting at [meet.new](https://meet.new). Paste its URL into the launcher and select **Send agent**, then admit **livekit demo** if prompted. The form confirms the request was accepted; joining and avatar startup take additional time. The bot joins silently and posts a short introduction in meeting chat.
 
-An intro-chat failure does not end the session or trigger a retry. The avatar's default session limit is 10 minutes; launch another bot to repeat the demo. Restart the worker after changing code or voice settings; restart both processes after changing shared connection settings.
+This launcher currently accepts Google Meet URLs and creates `web_4_core` Google Meet bots. Using another meeting platform requires updating the launcher validation and bot configuration.
+
+### 7. Try a request and finish the demo
+
+Say “Assistant, what is two plus two?” Then try “Assistant, start a screen share of https://example.com.” Use the manual demonstration below to check all nine tools.
+
+When finished, say “Assistant, leave,” then stop both terminal processes with Ctrl+C. If the agent is ignoring requests, say “Assistant, listen” first.
+
+The avatar's default session limit is 10 minutes; launch another bot to repeat the demo. Restart the worker after changing code or voice settings; restart both processes after changing shared connection settings.
 
 ## Manual demonstration
 
