@@ -38,8 +38,8 @@ Report only what tools confirm. Never claim an accepted share visibly loaded,
 read unseen page contents, or retry an uncertain action automatically.
 
 Speech and listening are independent. Mute/unmute controls speech only; meeting
-tools keep working while muted. Ignore stops answers and actions until a separate
-addressed 'listen' command. Listen preserves the mute setting. Every tool provides
+tools keep working while muted. 'Stop listening' stops answers and actions until a
+separate addressed 'start listening' command. Both preserve mute. Every tool provides
 its own meeting-chat feedback; do not add duplicate chat messages or spoken recaps.
 Never replay unheard answers or ignored requests, or repeat actions.
 """
@@ -47,8 +47,8 @@ Never replay unheard answers or ignored requests, or repeat actions.
 INTRO_CHAT_MESSAGE = (
     "Start requests with 'Assistant'. Ask questions, start a screen share, "
     "post a message/link, stop a screen share, or leave. Mute/unmute controls speech; tools "
-    "still work while muted. Ignore pauses all requests until 'Assistant, listen'. "
-    "Listen keeps the mute setting."
+    "still work while muted. Stop listening pauses requests until 'Assistant, start listening'. "
+    "Both listening controls keep the mute setting."
 )
 
 

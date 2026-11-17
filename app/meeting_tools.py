@@ -49,16 +49,16 @@ class MeetingTools:
         self.bot_id = bot_id
         self.session = session
         self.current_page_url: str | None = None
-        self.is_ignoring = False
+        self.is_listening = True
         self.listening_since: float | None = None
-        self._ignore_interruption: asyncio.Future[None] | None = None
+        self._stop_listening_interruption: asyncio.Future[None] | None = None
 
     @property
     def is_muted(self) -> bool:
         return not self.session.output.audio_enabled
 
     def _require_active_request(self, context: RunContext) -> None:
-        if self.is_ignoring or context.speech_handle.interrupted:
+        if not self.is_listening or context.speech_handle.interrupted:
             raise StopResponse()
 
     async def _call_recall(self, request: Awaitable[None]) -> None:
@@ -171,31 +171,31 @@ class MeetingTools:
         return "Speech enabled."
 
     @function_tool()
-    async def ignore_agent(self, context: RunContext) -> None:
-        """Stop answering and acting until 'listen', preserving the mute setting."""
+    async def stop_listening(self, context: RunContext) -> None:
+        """Stop answers and actions until 'start listening', preserving mute."""
         self._require_active_request(context)
-        self.is_ignoring = True
+        self.is_listening = False
         # Awaiting here would wait for this tool's own speech handle to finish.
-        self._ignore_interruption = self.session.interrupt(force=True)
+        self._stop_listening_interruption = self.session.interrupt(force=True)
         speech = "muted" if self.is_muted else "enabled"
-        await self._post_status(f"Ignoring requests. Speech remains {speech}.")
+        await self._post_status(f"Stopped listening. Speech remains {speech}.")
         raise StopResponse()
 
     @function_tool()
-    async def listen_agent(self, context: RunContext) -> str:
+    async def start_listening(self, context: RunContext) -> str:
         """Resume accepting new requests without changing the speech mute setting."""
         if context.speech_handle.interrupted:
             raise StopResponse()
-        if self.is_ignoring:
-            if self._ignore_interruption is not None:
-                await asyncio.shield(self._ignore_interruption)
+        if not self.is_listening:
+            if self._stop_listening_interruption is not None:
+                await asyncio.shield(self._stop_listening_interruption)
             if context.speech_handle.interrupted:
                 raise StopResponse()
             self.session.clear_user_turn()
             self.listening_since = time.time()
-            self.is_ignoring = False
+            self.is_listening = True
         speech = "muted" if self.is_muted else "enabled"
-        await self._post_status(f"Listening. Speech is {speech}.")
+        await self._post_status(f"Started listening. Speech is {speech}.")
         return "Listening. Speech mute setting unchanged."
 
     def tools(self) -> list:
@@ -207,6 +207,6 @@ class MeetingTools:
             self.leave_call,
             self.mute_agent,
             self.unmute_agent,
-            self.ignore_agent,
-            self.listen_agent,
+            self.stop_listening,
+            self.start_listening,
         ]

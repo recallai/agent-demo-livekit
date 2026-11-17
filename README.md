@@ -15,8 +15,8 @@ Address the avatar as **“Assistant”**, followed by a command such as “star
 | Post a departure message and leave the meeting | `leave_call()` |
 | Silence speech; keep tools available | `mute_agent()` |
 | Enable speech | `unmute_agent()` |
-| Stop answering and acting | `ignore_agent()` |
-| Resume requests; preserve the mute setting | `listen_agent()` |
+| Stop listening for requests | `stop_listening()` |
+| Start listening for requests; preserve the mute setting | `start_listening()` |
 
 ## Requirements
 
@@ -91,15 +91,13 @@ Keep this process running alongside the worker, then open [the launcher](http://
 
 ### 6. Send the agent to a meeting
 
-Create and join a meeting at [meet.new](https://meet.new). Paste its URL into the launcher and select **Send agent**, then admit **livekit demo** if prompted. The form confirms the request was accepted; joining and avatar startup take additional time. The bot joins silently and posts a short introduction in meeting chat.
-
-This launcher currently accepts Google Meet URLs and creates `web_4_core` Google Meet bots. Using another meeting platform requires updating the launcher validation and bot configuration.
+Create and join a meeting at [meet.new](https://meet.new/). Paste its URL into the launcher and select **Send agent**, then admit **livekit demo** once it enters the waiting room.
 
 ### 7. Try a request and finish the demo
 
 Say “Assistant, start a screen share of https://example.com.” Expect one chat confirmation that includes the loading notice. Use the manual demonstration below to try all nine tools.
 
-When finished, say “Assistant, leave,” then stop both terminal processes with Ctrl+C. If the agent is ignoring requests, say “Assistant, listen” first.
+When finished, say “Assistant, leave,” then stop both terminal processes with Ctrl+C. If the agent has stopped listening, say “Assistant, start listening” first.
 
 The avatar's default session limit is 10 minutes; launch another bot to repeat the demo. Restart the worker after changing code or voice settings; restart both processes after changing shared connection settings.
 
@@ -137,21 +135,21 @@ Start with a fresh bot: it should join silently and post one introduction. Follo
 
    **Expect:** An unmute confirmation in chat and a short spoken answer. No muted answers or actions replay.
 
-6. **Ignore requests.**
+6. **Stop listening for requests.**
 
-   **Say:** “Assistant, ignore.” Then: “Assistant, post Ignore test in chat.”
+   **Say:** “Assistant, stop listening.” Then: “Assistant, post Paused test in chat.”
 
-   **Expect:** An ignore confirmation, followed by no message or action. Requests to unmute or leave should also be ignored.
+   **Expect:** “Stopped listening” in chat, followed by no message or action. Requests to unmute or leave should also be discarded.
 
-7. **Resume listening.**
+7. **Start listening again.**
 
-   **Say:** “Assistant, listen” as a standalone command. Then: “Assistant, post Listening test in chat.”
+   **Say:** “Assistant, start listening” as a standalone command. Then: “Assistant, post Listening test in chat.”
 
-   **Expect:** A listen confirmation and the new message in chat. Ignored requests do not replay.
+   **Expect:** “Started listening” and the new message in chat. Skipped requests do not replay.
 
 8. **Check that listening does not unmute speech.**
 
-   **Say:** “Assistant, mute,” then “Assistant, ignore,” then “Assistant, listen.” Request another screen share, its link, and then stop sharing.
+   **Say:** “Assistant, mute,” then “Assistant, stop listening,” then “Assistant, start listening.” Request another screen share, its link, and then stop sharing.
 
    **Expect:** A chat confirmation after each tool, with speech still muted throughout.
 
@@ -163,8 +161,8 @@ Start with a fresh bot: it should join silently and post one introduction. Follo
 
 Additional checks:
 
-- Repeat mute, unmute, or listen: the requested state should stay the same and each accepted command should confirm in chat.
-- Discuss or quote commands without directing them at the avatar: its state should not change. While ignoring, only a standalone addressed “listen” request should resume it.
+- Repeat mute, unmute, or start listening: the requested state should stay the same and each accepted command should confirm in chat.
+- Discuss or quote commands without directing them at the avatar: its state should not change. After stopping listening, only a standalone addressed “start listening” request should resume it.
 - During a longer answer, ordinary conversation should not interrupt it. A request addressed to “Assistant” can interrupt once its transcript is complete.
 
 Perform the demonstration manually and record results outside the repository. The sample contains no evaluator or test harness.
@@ -176,7 +174,7 @@ Perform the demonstration manually and record results outside the repository. Th
 | `app/web.py` | Serve the form and create a Recall bot. |
 | `app/templates/index.html` | Single form and request status. |
 | `app/agent.py` | Instructions, voice-session configuration, avatar startup, and cleanup. |
-| `app/meeting_agent.py` | Filter speech before interruption and gate ignored turns except listen. |
+| `app/meeting_agent.py` | Filter speech before interruption; admit only start listening while paused. |
 | `app/meeting_tools.py` | Nine tools, listening/mute state, and the current page URL. |
 | `app/speech_output.py` | Drop muted avatar audio without cancelling tools. |
 | `app/recall_client.py` | Recall HTTP requests and clear errors. |
@@ -186,7 +184,7 @@ Recall connects the meeting to LiveKit and supplies its bot ID and regional API 
 
 Speech is filtered before it can interrupt an answer or enter the conversation. Requests are accepted once STT provides their complete transcript.
 
-Muting disables future speech synthesis and drops avatar audio already in flight, while leaving tools available. Ignored requests are discarded except for a standalone addressed listen command; they cannot replay after listening resumes.
+Muting disables future speech synthesis and drops avatar audio already in flight, while leaving tools available. Stopping listening discards requests except for a standalone addressed “start listening” command; skipped requests cannot replay when listening resumes.
 
 ## Boundaries and troubleshooting
 
@@ -197,8 +195,8 @@ Muting disables future speech synthesis and drops avatar audio already in flight
 - There is no database, search feature, transcript storage, webhook receiver, or cloud deployment requirement.
 - The launcher has no application authentication; keep it bound to localhost.
 
-If the bot stays silent, check the name prefix, ignore state, and mute state first, then inspect the worker terminal. Connection failures usually mean mismatched regional Recall settings, LiveKit credentials or dispatch names, or unavailable inference/avatar access. Fill any missing `.env` setting named by an error and restart the affected process.
+If the bot stays silent, check the name prefix, listening state, and mute state first, then inspect the worker terminal. Connection failures usually mean mismatched regional Recall settings, LiveKit credentials or dispatch names, or unavailable inference/avatar access. Fill any missing `.env` setting named by an error and restart the affected process.
 
-If ignoring, say “Assistant, listen” first. Ask “Assistant, leave” before stopping the worker and web server with Ctrl+C. If a provider fails, check Meet and Recall and remove any remaining demo bot.
+If listening is stopped, say “Assistant, start listening” first. Ask “Assistant, leave” before stopping the worker and web server with Ctrl+C. If a provider fails, check Meet and Recall and remove any remaining demo bot.
 
 Reference: [Recall Output Media](https://docs.recall.ai/docs/stream-media).

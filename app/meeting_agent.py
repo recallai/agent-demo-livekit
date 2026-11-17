@@ -21,7 +21,9 @@ ADDRESSED_REQUEST = re.compile(
     r"^\s*(?:(?:hey|hi|hello|ok|okay)[,\s]+)?(?:assistant|live\s*kit\s+demo)\b",
     re.IGNORECASE,
 )
-LISTEN_COMMAND = re.compile(r"[\s,.:;-]*(?:please\s+)?listen(?:\s+please)?[.!]?\s*", re.IGNORECASE)
+START_LISTENING_COMMAND = re.compile(
+    r"[\s,.:;-]*(?:please\s+)?start\s+listening(?:\s+please)?[.!]?\s*", re.IGNORECASE
+)
 
 
 class MeetingAgent(Agent):
@@ -35,10 +37,10 @@ class MeetingAgent(Agent):
             return False
         listening_since = self.meeting_tools.listening_since
         if listening_since is not None and (started_at is None or started_at <= listening_since):
-            # Delayed transcription must not replay speech from the ignored period.
+            # Delayed transcription must not replay speech from before listening resumed.
             return False
-        return not self.meeting_tools.is_ignoring or bool(
-            LISTEN_COMMAND.fullmatch(text[addressed.end():])
+        return self.meeting_tools.is_listening or bool(
+            START_LISTENING_COMMAND.fullmatch(text[addressed.end():])
         )
 
     async def stt_node(
@@ -55,9 +57,9 @@ class MeetingAgent(Agent):
             elif event.type == stt.SpeechEventType.FINAL_TRANSCRIPT:
                 text = event.alternatives[0].text if event.alternatives else ""
                 started_at = start.speech_start_time if start else event.created_at
-                if (self.meeting_tools.is_ignoring or not accepted) and not self._accepts_request(
-                    text, started_at
-                ):
+                if (
+                    not self.meeting_tools.is_listening or not accepted
+                ) and not self._accepts_request(text, started_at):
                     continue
                 if start is not None:
                     yield start
@@ -85,11 +87,11 @@ class MeetingAgent(Agent):
         tools: list[llm.Tool],
         model_settings: ModelSettings,
     ) -> AsyncIterable[llm.ChatChunk | str | FlushSentinel] | None:
-        if self.meeting_tools.is_ignoring:
-            # The only admitted turn is 'listen'; keep every other tool unavailable.
-            tools = [self.meeting_tools.listen_agent]
+        if not self.meeting_tools.is_listening:
+            # Only 'start listening' is admitted; keep every other tool unavailable.
+            tools = [self.meeting_tools.start_listening]
             model_settings = ModelSettings(
-                tool_choice={"type": "function", "function": {"name": "listen_agent"}}
+                tool_choice={"type": "function", "function": {"name": "start_listening"}}
             )
         return Agent.default.llm_node(self, chat_ctx, tools, model_settings)
 
