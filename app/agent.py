@@ -45,10 +45,14 @@ Never replay unheard answers or ignored requests, or repeat actions.
 """
 
 INTRO_CHAT_MESSAGE = (
-    "Start requests with 'Assistant'. Ask questions, start a screen share, "
-    "post a message/link, stop a screen share, or leave. Mute/unmute controls speech; tools "
-    "still work while muted. Stop listening pauses requests until 'Assistant, start listening'. "
-    "Both listening controls keep the mute setting."
+    "Say 'Assistant', then a request:\n\n"
+    "• Ask a question\n"
+    "• Share a webpage or send its URL\n"
+    "• Post a chat message\n"
+    "• Stop sharing or leave\n\n"
+    "Voice: mute / unmute (tools still work)\n"
+    "Requests: stop listening / start listening (keeps mute setting)\n\n"
+    "Check chat for action confirmations."
 )
 
 
