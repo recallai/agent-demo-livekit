@@ -51,7 +51,7 @@ Fill in the root `.env`. It is ignored by Git and never sent to the browser. Bot
 | Variable | Value |
 | --- | --- |
 | `RECALL_API_KEY` | REST API key for your Recall workspace. |
-| `RECALL_API_BASE_URL` | Matching regional API URL, such as `https://us-west-2.recall.ai/api/v1`. |
+| `RECALL_API_BASE_URL` | Regional API URL for the launcher, such as `https://us-west-2.recall.ai/api/v1`. |
 | `LIVEKIT_URL` | Your project's websocket URL. |
 | `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` | Matching LiveKit project credentials. |
 | `LIVEKIT_AGENT_NAME` | Worker dispatch name; use the same value for both processes. |
@@ -125,7 +125,9 @@ The avatar has a default session limit; launch another bot to repeat the demo.
 | `app/recall_client.py` | Recall HTTP requests and clear errors. |
 | `app/config.py` | Load `.env` and define the fixed bot name. |
 
-Recall connects the meeting to LiveKit and supplies its bot ID and regional API URL. Runway turns synthesized speech into synchronized audio and animated video, which Recall outputs through the bot's camera. Five tools call Recall; four control speech and request processing locally.
+The worker reads `recall.bot_id` and `recall.api_base_url` from LiveKit's [job dispatch metadata](https://docs.recall.ai/docs/meeting-agents-livekit#use-recall-bot-context-in-tools). The metadata URL is the regional origin, such as `https://us-west-2.recall.ai`; the worker adds `/api/v1` for Recall requests. Your Recall API key stays in `.env`.
+
+Runway turns synthesized speech into synchronized audio and animated video, which Recall outputs through the bot's camera. Five tools call Recall; four control speech and request processing locally.
 
 Speech is filtered before it can interrupt an answer or enter the conversation. Requests are accepted once STT provides their complete transcript.
 
