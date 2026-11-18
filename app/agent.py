@@ -51,16 +51,14 @@ INTRO_CHAT_MESSAGE = (
 )
 
 
-def meeting_bot_id(metadata: str, expected_api_url: str) -> str:
+def meeting_bot_context(metadata: str) -> tuple[str, str]:
     try:
         recall = json.loads(metadata)["recall"]
         bot_id = str(UUID(recall["bot_id"]))
         api_url = recall["api_base_url"].rstrip("/")
     except (ValueError, TypeError, KeyError, AttributeError) as error:
         raise ValueError("The job must contain Recall bot ID and API URL metadata.") from error
-    if api_url != expected_api_url.rstrip("/"):
-        raise ValueError("The meeting's Recall region does not match .env.")
-    return bot_id
+    return bot_id, api_url
 
 
 def create_voice_session() -> AgentSession:
@@ -85,8 +83,7 @@ def create_voice_session() -> AgentSession:
 
 @server.rtc_session(agent_name=require_env("LIVEKIT_AGENT_NAME"))
 async def entrypoint(ctx: agents.JobContext) -> None:
-    api_url = require_env("RECALL_API_BASE_URL")
-    bot_id = meeting_bot_id(ctx.job.metadata, api_url)
+    bot_id, api_url = meeting_bot_context(ctx.job.metadata)
     finished = asyncio.Event()
     session: AgentSession | None = None
     avatar: runway.AvatarSession | None = None
@@ -110,7 +107,7 @@ async def entrypoint(ctx: agents.JobContext) -> None:
             session_error = RuntimeError("The speaking avatar disconnected.")
             finished.set()
 
-    async with RecallClient(require_env("RECALL_API_KEY"), api_url) as client:
+    async with RecallClient(require_env("RECALL_API_KEY"), f"{api_url}/api/v1") as client:
         try:
             session = create_voice_session()
 
