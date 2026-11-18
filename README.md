@@ -20,10 +20,8 @@ Address the avatar as **“Assistant”**, followed by a command such as “star
 
 ## Requirements
 
-> **[Talk to us](https://recall.ai/book-agent-demo) before you start.** This demo requires us to enable feature flags on your Recall workspace.
-
 - Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/).
-- A Recall workspace with the LiveKit integration enabled and a REST API key.
+- A Recall workspace and a REST API key.
 - A LiveKit Cloud project with credentials and access to Inference for STT, LLM, and TTS.
 - A Runway API key with Characters access and a character preset.
 - A Google account to host the meeting.
