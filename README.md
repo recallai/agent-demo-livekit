@@ -1,10 +1,12 @@
 # agent-demo-livekit
 
-A small agent demo featuring [Recall.ai's Output Media API](https://docs.recall.ai/docs/stream-media) and [LiveKit](https://livekit.io/). It includes an interactive avatar you can command through nine tool calls.
+Send an interactive meeting agent to Google Meet, Zoom, Microsoft Teams, or Webex. It appears as a speaking avatar, answers questions aloud, and takes spoken requests to share a webpage, post in chat, or leave the call.
+
+LiveKit runs the voice session, Runway animates the avatar, and Recall connects the agent to the meeting. [LiveKit](https://livekit.io/) · [Recall's Output Media API](https://docs.recall.ai/docs/stream-media)
 
 ## Behavior
 
-Address the avatar as **“Assistant”**, followed by a command such as “start a screen share of https://example.com.” Each tool call posts its result in meeting chat; requested messages and links are their own confirmation.
+Address the avatar as **“Assistant”**, followed by a command such as “start a screen share of https://example.com.” Where meeting chat is available, each tool call posts its result there. Requested messages and links are their own confirmation.
 
 | Action | Tool |
 | --- | --- |
@@ -24,7 +26,7 @@ Address the avatar as **“Assistant”**, followed by a command such as “star
 - A Recall workspace and a REST API key.
 - A LiveKit Cloud project with credentials and access to Inference for STT, LLM, and TTS.
 - A Runway API key with Characters access and a character preset.
-- A Google account to host the meeting.
+- A meeting account on one of the supported platforms.
 
 ## Quickstart
 
@@ -89,11 +91,11 @@ Keep this process running alongside the worker, then open [the launcher](http://
 
 ### 6. Send the agent to a meeting
 
-Create and join a meeting at [meet.new](https://meet.new/). Paste its URL into the launcher and select **Send agent**, then admit **livekit demo** once it enters the waiting room.
+For your first test, start a Google Meet call at [meet.new](https://meet.new/). Paste the direct meeting link into the launcher, select **Send agent**, and admit **livekit demo** if prompted. The launcher requests a four-core bot.
 
 ### 7. Try the agent
 
-Try these phrases. Each tool call also posts an acknowledgement message in the chat.
+Try the chat commands in a meeting that allows bot chat. [Recall chat support](https://docs.recall.ai/docs/sending-chat-messages)
 
 | Try saying |
 | --- |
@@ -135,7 +137,6 @@ Muting disables future speech synthesis and drops avatar audio already in flight
 
 ## Boundaries and troubleshooting
 
-- Use meeting chat to see the history of commands.
-- If the bot doesn't respond, check chat to see whether it has stopped listening or is muted.
+- Where chat is available, check it for recent commands and the agent's mute or listening status.
 - Chat messages are limited to 500 characters.
 - If the bot doesn't respond, make sure to clearly say “Assistant” before your command.
