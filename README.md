@@ -91,11 +91,11 @@ Keep this process running alongside the worker, then open [the launcher](http://
 
 ### 6. Send the agent to a meeting
 
-For your first test, start a Google Meet call at [meet.new](https://meet.new/). You can also use a link from any supported platform. Paste the direct meeting link into the launcher, select **Send agent**, and admit **livekit demo** if prompted. The launcher requests a four-core bot.
+For your first test, start a Google Meet call at [meet.new](https://meet.new/). Paste the direct meeting link into the launcher, select **Send agent**, and admit **livekit demo** if prompted. The launcher requests a four-core bot.
 
 ### 7. Try the agent
 
-Try these phrases. Recall's meeting chat tools work on Zoom, Google Meet, and Microsoft Teams when meeting settings allow chat. On Webex, try the voice, screen sharing, and leave commands. [Recall chat support](https://docs.recall.ai/docs/sending-chat-messages)
+Try the chat commands in a meeting that allows bot chat. [Recall chat support](https://docs.recall.ai/docs/sending-chat-messages)
 
 | Try saying |
 | --- |
