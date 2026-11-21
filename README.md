@@ -1,6 +1,6 @@
 # agent-demo-livekit
 
-Send an interactive meeting agent to Zoom, Google Meet, Microsoft Teams, or Webex. It appears as a speaking avatar, answers questions aloud, and takes spoken requests to share a webpage, post in chat, or leave the call.
+Send an interactive meeting agent to Google Meet, Zoom, Microsoft Teams, or Webex. It appears as a speaking avatar, answers questions aloud, and takes spoken requests to share a webpage, post in chat, or leave the call.
 
 LiveKit runs the voice session, Runway animates the avatar, and Recall connects the agent to the meeting. [LiveKit](https://livekit.io/) · [Recall's Output Media API](https://docs.recall.ai/docs/stream-media)
 
@@ -91,7 +91,7 @@ Keep this process running alongside the worker, then open [the launcher](http://
 
 ### 6. Send the agent to a meeting
 
-Join a Zoom, Google Meet, Microsoft Teams, or Webex meeting. Paste its join link into the launcher and select **Send agent**. The launcher requests a four-core bot. Admit **livekit demo** if prompted.
+For your first test, start a Google Meet call at [meet.new](https://meet.new/). You can also use a link from any supported platform. Paste the direct meeting link into the launcher, select **Send agent**, and admit **livekit demo** if prompted. The launcher requests a four-core bot.
 
 ### 7. Try the agent
 
