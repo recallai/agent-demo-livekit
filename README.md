@@ -119,7 +119,6 @@ The avatar has a default session limit; launch another bot to repeat the demo.
 | File | Responsibility |
 | --- | --- |
 | `app/web.py` | Serve the form and create a Recall bot. |
-| `app/meeting_url.py` | Validate meeting links. |
 | `app/templates/index.html` | Single form and request status. |
 | `app/agent.py` | Instructions, voice-session configuration, avatar startup, and cleanup. |
 | `app/meeting_agent.py` | Filter speech before interruption; admit only start listening while paused. |
