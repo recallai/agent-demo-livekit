@@ -1,6 +1,6 @@
 # Working on this sample
 
-Keep this a small, runnable Google Meet demo. The page has one meeting-URL input and a submit button.
+Keep this a small, runnable meeting agent demo for Zoom, Google Meet, Microsoft Teams, and Webex. The page has one meeting-URL input and a submit button.
 
 - The nine conversational tools are `start_screenshare`, `send_chat_message`, `send_current_page_link`, `stop_screenshare`, `leave_call`, `mute_agent`, `unmute_agent`, `stop_listening`, and `start_listening`.
 - Require each request to start with `Assistant` or `livekit demo`. Filter other meeting conversation in the public STT node before it can interrupt or enter the agent's context. Keep `vad=None` and STT turn detection paired with this filter. Answer in one short sentence unless asked for detail; avoid unsolicited advice, follow-up questions, and spoken tool recaps.
@@ -11,7 +11,7 @@ Keep this a small, runnable Google Meet demo. The page has one meeting-URL input
 - Hardcode the meeting bot and avatar participant name as `livekit demo` in `app/config.py`. Use a female speaking voice; the example selects Rime's Astra.
 - Join silently. Post one concise capabilities message in meeting chat automatically, then wait to be addressed. Do not speak a greeting or feature list. An intro chat failure must not end the session or trigger an automatic retry.
 - Use LiveKit's Runway plugin (`runway.AvatarSession`) for synchronized speech and animated video. Configure its separate Runway API key and preset ID in `.env`. The demo requires a speaking avatar.
-- Create Google Meet bots with `variant.google_meet` set to `web_4_core` for output media.
+- Set the Zoom, Google Meet, Microsoft Teams, and Webex entries in `variant` to `web_4_core` for output media.
 - Use Recall MCP documentation to check Recall API behavior. For newly released integration fields, record any documentation gap rather than guessing.
 - Keep global behavior in the agent instructions, tool-specific guidance in tool docstrings, and factual outcomes in tool results.
 - Let LiveKit own job shutdown; keep one explicit session-close path in `finally` for failures.
