@@ -2,7 +2,7 @@
 
 Send an interactive meeting agent to Google Meet, Zoom, Microsoft Teams, or Webex. It appears as a speaking avatar, answers questions aloud, and takes spoken requests to share a webpage, post in chat, or leave the call.
 
-LiveKit runs the voice session, Runway animates the avatar, and Recall connects the agent to the meeting. [LiveKit](https://livekit.io/) · [Recall's Output Media API](https://docs.recall.ai/docs/stream-media)
+LiveKit runs the voice session, Runway animates the avatar, and Recall connects the agent to the meeting. [LiveKit](https://livekit.io/) · [Recall's Meeting Agent API](https://docs.recall.ai/docs/stream-media) · [Recall.ai LiveKit Demo](https://youtu.be/as4ggeUyjLI) · [Recall.ai LiveKit Tutorial](https://www.recall.ai/blog/how-to-build-a-livekit-agent-for-meetings-with-recall-ai)
 
 ## Behavior
 
